@@ -1,0 +1,6 @@
+apiVersion: v2
+name: air-monitor-ingestor
+description: MQTT ingestor for air quality sensor readings
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

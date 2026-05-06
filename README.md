@@ -32,12 +32,32 @@ npx tsx src/main.ts
 
 ## Environment Variables
 
-| Variable        | Example                               | Description            |
-|-----------------|---------------------------------------|------------------------|
-| `DATABASE_URL`  | `postgres://user:pw@localhost/airdb`  | TimescaleDB connection |
-| `MQTT_BROKER`   | `mqtts://mqtt.example.com:8883`       | Broker URL             |
-| `MQTT_USERNAME` | `esp32`                               | Broker username        |
-| `MQTT_PASSWORD` | `secret`                              | Broker password        |
+| Variable        | Example                              | Description            |
+| --------------- | ------------------------------------ | ---------------------- |
+| `DATABASE_URL`  | `postgres://user:pw@localhost/airdb` | TimescaleDB connection |
+| `MQTT_BROKER`   | `mqtts://mqtt.example.com:8883`      | Broker URL             |
+| `MQTT_USERNAME` | `esp32`                              | Broker username        |
+| `MQTT_PASSWORD` | `secret`                             | Broker password        |
+
+## Deployment
+
+Build and push the Docker image to ECR, then install with Helm:
+
+```bash
+
+export IMAGE_TAG=$(cat VERSION)
+docker build -t $IMAGE_REPO:$IMAGE_TAG .
+docker push $IMAGE_REPO:$IMAGE_TAG
+
+nhelm upgrade --install air-monitor-ingestor ./helm/air-monitor-ingestor \
+  --set image.repository=$IMAGE_REPO \
+  --set image.tag=$IMAGE_TAG \
+  --set secrets.databaseUrl=$DATABASE_URL \
+  --set secrets.mqttBrokerUrl=$MQTT_BROKER_URL \
+  --set secrets.mqttUsername=$MQTT_USERNAME \
+  --set secrets.mqttPassword=$MQTT_PASSWORD \
+  --set secrets.subscription=$SUBSCRIPTION
+```
 
 ## MQTT Topics
 
